@@ -8,18 +8,23 @@ from dotenv import load_dotenv
 load_dotenv()
 class PDFChatbot:
     def __init__(self):
+        self.embeddings = None
+        self.db = None
+        self.qa = None
+
+    def setEmbedding(self):
         # This line of code is initializing an instance of the `GoogleGenerativeAIEmbeddings` class
         # and assigning it to the `self.embeddings` attribute of the `PDFChatbot` class.
-        self.embeddings = GoogleGenerativeAIEmbeddings(
-            google_api_key=os.getenv("GOOGLE_API_KEY"),
-            model="models/embedding-001"
-        )
+        if not self.embeddings:
+            self.embeddings = GoogleGenerativeAIEmbeddings(
+                google_api_key=os.getenv("GOOGLE_API_KEY"),
+                model="models/embedding-001"
+            )
         # The line `self.db = Chroma("vectors", persist_directory="./vector_db",
         # embedding_function=self.embeddings)` in the `PDFChatbot` class is creating an instance of
         # the `Chroma` class and assigning it to the `self.db` attribute of the `PDFChatbot` class.
-        self.db = Chroma("vectors",persist_directory="./vector_db",embedding_function=self.embeddings)
-        self.qa = None
-
+        if not self.db:
+            self.db = Chroma("vectors",persist_directory="./vector_db",embedding_function=self.embeddings)
     def loadPDF(self,pdfpath):
         # The code snippet `pdfloader = PyMuPDFLoader(pdfpath)` is creating an instance of the
         # `PyMuPDFLoader` class, which is used for loading a PDF document located at the specified

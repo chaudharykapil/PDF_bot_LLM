@@ -17,6 +17,7 @@ def index():
     if request.method == "GET":
         return render_template("index.html")
     elif request.method == "POST":
+        bot.setEmbedding()
         pdf_file = request.files.get("pdf_file")
         os.makedirs("./pdfs", exist_ok=True)
         filename = f"pdfs/{str(uuid.uuid4())}.pdf"
