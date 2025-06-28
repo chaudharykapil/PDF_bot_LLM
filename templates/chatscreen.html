@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF Chatbot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to bottom right, #e3f2fd, #bbdefb);
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .chat-header {
+      background-color: #1976d2;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background-color: #e1f5fe;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: 20px;
+      font-size: 15px;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #90caf9;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #a5d6a7;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 16px;
+      border-top: 2px solid #90caf9;
+      background: #ffffff;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 14px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .chat-input button {
+      margin-left: 12px;
+      padding: 14px 22px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .chat-input button:hover {
+      background-color: #1565c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">PDF Chatbot Assistant</div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="message bot">Hello! Upload your PDF and start chatting with me.</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const messageText = input.value.trim();
+      if (!messageText) return;
+
+      const messagesDiv = document.getElementById("chat-messages");
+
+      const userMessage = document.createElement("div");
+      userMessage.className = "message user";
+      userMessage.textContent = messageText;
+      messagesDiv.appendChild(userMessage);
+      input.value = "";
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+      try {
+        const formData = new FormData();
+        formData.append("query", messageText);
+
+        const response = await fetch("/ask", {
+          method: "POST",
+          body: formData,
+        });
+
+        const answer = await response.text();
+
+        const botMessage = document.createElement("div");
+        botMessage.className = "message bot";
+        botMessage.textContent = answer;
+        messagesDiv.appendChild(botMessage);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      } catch (error) {
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "message bot";
+        errorMessage.textContent = "Oops! Something went wrong.";
+        messagesDiv.appendChild(errorMessage);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+    }
+  </script>
+</body>
+</html>
