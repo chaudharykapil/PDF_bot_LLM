@@ -100,18 +100,25 @@
   <div class="chat-container">
     <div class="chat-header">PDF Chatbot Assistant</div>
     <div class="chat-messages" id="chat-messages">
-      <div class="message bot">Hello! Upload your PDF and start chatting with me.</div>
+
     </div>
     <div class="chat-input">
       <input type="text" id="user-input" placeholder="Type your message..." />
-      <button onclick="sendMessage()">Send</button>
+      <button onclick="ClickSend()">Send</button>
     </div>
   </div>
 
   <script>
-    async function sendMessage() {
-      const input = document.getElementById("user-input");
-      const messageText = input.value.trim();
+    window.addEventListener("load",()=>{
+      sendMessage("Give the introduction of the Document")
+    })
+    function ClickSend() { 
+      const input = document.getElementById("user-input").value;
+      sendMessage(input)
+    }
+    async function sendMessage(input) {
+      
+      const messageText = input.trim();
       if (!messageText) return;
 
       const messagesDiv = document.getElementById("chat-messages");
@@ -145,6 +152,9 @@
         errorMessage.textContent = "Oops! Something went wrong.";
         messagesDiv.appendChild(errorMessage);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+      finally{
+        document.getElementById("user-input").value = ""
       }
     }
   </script>
